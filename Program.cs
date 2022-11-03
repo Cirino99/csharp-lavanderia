@@ -95,5 +95,60 @@ public class Lavatrice
 
 public class Asciugatrice
 {
-
+    public Asciugatrice(string nome)
+    {
+        Stato = "Vuota";
+        Gettoni = 0;
+        Nome = nome;
+    }
+    public int Gettoni { get; set; }
+    public string Stato { get; private set; }
+    public int Tempo { get; private set; }
+    public string Nome { get; set; }
+    public void Rapido()
+    {
+        if (ControlloStato() == "Vuota")
+        {
+            Stato = "Asciugatura rapida in funzione";
+            Tempo = 30;
+            Gettoni += 2;
+        }
+    }
+    public void Intenso()
+    {
+        if (ControlloStato() == "Vuota")
+        {
+            Stato = "Asciugatura intensa in funzione";
+            Tempo = 60;
+            Gettoni += 4;
+        }
+    }
+    private string ControlloStato()
+    {
+        if (Stato != "Vuota")
+        {
+            Random random = new Random();
+            int finito = random.Next(1, 4);
+            if (finito == 1 || Tempo == 0)
+            {
+                Tempo = 0;
+                Stato = "Vuota";
+            }
+            else
+            {
+                Tempo = random.Next(0, Tempo);
+            }
+        }
+        return Stato;
+    }
+    public void DettagliMacchina()
+    {
+        Console.WriteLine("Nome: " + Nome);
+        Console.WriteLine("Stato: " + ControlloStato());
+        Console.WriteLine("Tempo alla fine dell'asciugatura: " + Tempo);
+    }
+    public double Incasso()
+    {
+        return (double)Gettoni * 0.50;
+    }
 }
