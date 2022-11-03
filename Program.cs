@@ -162,6 +162,7 @@ public class Lavatrice
                 Gettoni += LavaggioCorrente.Costo;
                 Detersivo -= LavaggioCorrente.ConsumoDetersivo;
                 Ammorbidente -= LavaggioCorrente.ConsumoAmmorbidente;
+                Stato = false;
             }
         }
         else
@@ -235,6 +236,7 @@ public class Asciugatrice
             asciugaturaCorrente.TempoRimanente = programmiAsciugatura[scelta - 1].Tempo;
             asciugaturaCorrente.Costo = programmiAsciugatura[scelta - 1].Costo;
             Gettoni += asciugaturaCorrente.Costo;
+            Stato = false;
         }
                 
         else
