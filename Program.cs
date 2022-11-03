@@ -1,17 +1,57 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-Lavatrice lavatrice = new Lavatrice("prova");
-lavatrice.DettagliMacchina();
-for (int i=0; i<10; i++)
-{
-    lavatrice.Rinfrescante();
-    lavatrice.DettagliMacchina();
-}
-Console.WriteLine(lavatrice.Incasso());
+Lavanderia lavanderia = new Lavanderia();
+lavanderia.StatoMacchine();
+lavanderia.DettagliMacchina("lavatrice",3);
+lavanderia.Incasso();
 
 public class Lavanderia
 {
+    public Lavanderia()
+    {
+        lavatrici = new Lavatrice[5];
+        asciugatrici = new Asciugatrice[5];
+        for (int i=0; i<5; i++)
+        {
+            lavatrici[i] = new Lavatrice("Lavatrice" + (i + 1));
+            asciugatrici[i] = new Asciugatrice("Asciugatrice" + (i + 1));
+        }
+    }
+    private Lavatrice[] lavatrici;
+    private Asciugatrice[] asciugatrici;
 
+    public void StatoMacchine()
+    {
+        Console.Clear();
+        Console.WriteLine("Stato generale:");
+        for (int i=0; i<lavatrici.Length; i++)
+        {
+            Console.WriteLine(lavatrici[i].Nome + ": " + lavatrici[i].Stato);
+            Console.WriteLine(asciugatrici[i].Nome + ": " + asciugatrici[i].Stato);
+        }
+    }
+    public void DettagliMacchina(string macchina, int numero)
+    {
+        Console.Clear();
+        Console.WriteLine("Dettagli:");
+        if (macchina == "lavatrice")
+            lavatrici[numero].DettagliMacchina();
+        else
+            asciugatrici[numero].DettagliMacchina();
+    }
+    public void Incasso()
+    {
+        Console.Clear();
+        Console.WriteLine("Incassi:");
+        double incassoTotale = 0;
+        for(int i=0; i<lavatrici.Length; i++)
+        {
+            Console.WriteLine(lavatrici[i].Nome + ": " + lavatrici[i].Incasso() + "$");
+            Console.WriteLine(asciugatrici[i].Nome + ": " + asciugatrici[i].Incasso() + "$");
+            incassoTotale = incassoTotale + lavatrici[i].Incasso() + asciugatrici[i].Incasso();
+        }
+        Console.WriteLine("Totale: " + incassoTotale + "$");
+    }
 }
 
 public class Lavatrice
