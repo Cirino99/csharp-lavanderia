@@ -217,27 +217,15 @@ public class Asciugatrice
 {
     public Asciugatrice(string nome)
     {
-        Stato = "Vuota";
+        Stato = true;
         Gettoni = 0;
         Nome = nome;
+        programmaAsciugatura = new ProgrammaAsciugatura();
     }
     public int Gettoni { get; set; }
-    public string Stato { get; private set; }
-    public int Tempo { get; private set; }
+    public bool Stato { get; private set; }
     public string Nome { get; set; }
-    private void Rapido()
-    {
-        Stato = "Asciugatura rapida in funzione";
-        Tempo = 30;
-        Gettoni += 2;
-    }
-    private void Intenso()
-    {
-        Stato = "Asciugatura intensa in funzione";
-        Tempo = 60;
-        Gettoni += 4;
-    }
-
+    public ProgrammaAsciugatura programmaAsciugatura;
     public void NuovaAsciugatura()
     {
         Console.WriteLine("Digita:");
@@ -249,30 +237,34 @@ public class Asciugatrice
         switch (scelta)
         {
             case 1:
-                Rapido();
+                programmaAsciugatura.Tempo = 30;
+                programmaAsciugatura.AsciugaturaCorrente = "Asciugatura rapida";
+                Gettoni += 2;
                 break;
             case 2:
-                Intenso();
+                programmaAsciugatura.Tempo = 60;
+                programmaAsciugatura.AsciugaturaCorrente = "Asciugatura intensa";
+                Gettoni += 4;
                 break;
             default:
                 Console.WriteLine("Digitato numero errato");
                 break;
         }
     }
-    public string ControlloStato()
+    public bool ControlloStato()
     {
-        if (Stato != "Vuota")
+        if (!Stato)
         {
             Random random = new Random();
             int finito = random.Next(1, 4);
-            if (finito == 1 || Tempo == 0)
+            if (finito == 1 || programmaAsciugatura.Tempo == 0)
             {
-                Tempo = 0;
-                Stato = "Vuota";
+                programmaAsciugatura.Tempo = 0;
+                Stato = true;
             }
             else
             {
-                Tempo = random.Next(0, Tempo);
+                programmaAsciugatura.Tempo = random.Next(0, programmaAsciugatura.Tempo);
             }
         }
         return Stato;
@@ -281,10 +273,32 @@ public class Asciugatrice
     {
         Console.WriteLine("Nome: " + Nome);
         Console.WriteLine("Stato: " + ControlloStato());
-        Console.WriteLine("Tempo alla fine dell'asciugatura: " + Tempo);
+        Console.WriteLine("Tempo alla fine dell'asciugatura: " + programmaAsciugatura.Tempo);
     }
     public double Incasso()
     {
         return (double)Gettoni * 0.50;
     }
+}
+
+public class ProgrammaLavaggio
+{
+    public ProgrammaLavaggio()
+    {
+        Tempo = 0;
+        LavaggioCorrente = "nessuno";
+    }
+    public int Tempo { get; set; }
+    public string LavaggioCorrente { get; set; }
+}
+
+public class ProgrammaAsciugatura
+{
+    public ProgrammaAsciugatura()
+    {
+        Tempo = 0;
+        AsciugaturaCorrente = "nessuno";
+    }
+    public int Tempo { get; set; }
+    public string AsciugaturaCorrente { get; set; }
 }
