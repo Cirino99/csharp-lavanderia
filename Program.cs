@@ -1,14 +1,43 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
 Lavanderia lavanderia = new Lavanderia();
-lavanderia.StatoMacchine();
-lavanderia.DettagliMacchina("lavatrice",3);
-for(int i=0; i<100; i++)
+bool fine = false;
+do
 {
-    lavanderia.ProgrammaLavatrici();
-    lavanderia.ProgrammaAsciugatrici();
-}
-lavanderia.Incasso();
+    Console.WriteLine("Scegli: ");
+    Console.WriteLine("1 Stato Macchine");
+    Console.WriteLine("2 Dettagli Macchina");
+    Console.WriteLine("3 programa Lavatrici");
+    Console.WriteLine("4 programma Asciugatrici");
+    Console.WriteLine("5 incasso");
+    Console.WriteLine("6 esci");
+    int scelta = Convert.ToInt32(Console.ReadLine());
+    switch (scelta)
+    {
+        case 1:
+            lavanderia.StatoMacchine();
+            break;
+        case 2:
+            Console.WriteLine("Digita il tipo di macchina (lavatrice o asciugatrice)");
+            string macchina = Console.ReadLine();
+            Console.WriteLine("Digita il numero della macchina (da 1 a 5)");
+            int numero = Convert.ToInt32(Console.ReadLine());
+            lavanderia.DettagliMacchina(macchina,numero);
+            break;
+        case 3:
+            lavanderia.ProgrammaLavatrici();
+            break;
+        case 4:
+            lavanderia.ProgrammaAsciugatrici();
+            break;
+        case 5:
+            lavanderia.Incasso();
+            break;
+        default:
+            fine = true;
+            break;
+    }
+} while (!fine);
 
 public class Lavanderia
 {
@@ -40,9 +69,9 @@ public class Lavanderia
         Console.Clear();
         Console.WriteLine("Dettagli:");
         if (macchina == "lavatrice")
-            lavatrici[numero].DettagliMacchina();
+            lavatrici[numero - 1].DettagliMacchina();
         else
-            asciugatrici[numero].DettagliMacchina();
+            asciugatrici[numero - 1].DettagliMacchina();
     }
     public void Incasso()
     {
@@ -64,7 +93,8 @@ public class Lavanderia
             if (lavatrici[i].ControlloStato() == "Vuota")
             {
                 lavatrici[i].NuovoLavaggio();
-            } 
+                break;
+            }
         }
     }
     public void ProgrammaAsciugatrici()
@@ -133,7 +163,7 @@ public class Lavatrice
         Console.WriteLine("1 per Lavaggio Rinfrescante");
         Console.WriteLine("2 per Lavaggio Rinnovante");
         Console.WriteLine("3 per Lavaggio Sgrassante");
-        //int scelta = Console.Read();
+        //int scelta = Convert.ToInt32(Console.ReadLine());
         Random random = new Random();
         int scelta = random.Next(1, 4);
         switch (scelta)
@@ -213,7 +243,7 @@ public class Asciugatrice
         Console.WriteLine("Digita:");
         Console.WriteLine("1 per Asciugatura rapida");
         Console.WriteLine("2 per Asciugatura intensa");
-        //int scelta = Console.Read();
+        //int scelta = Convert.ToInt32(Console.ReadLine());
         Random random = new Random();
         int scelta = random.Next(1, 3);
         switch (scelta)
