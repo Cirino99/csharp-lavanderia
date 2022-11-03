@@ -60,8 +60,18 @@ public class Lavanderia
         Console.WriteLine("Stato generale:");
         for (int i=0; i<lavatrici.Length; i++)
         {
-            Console.WriteLine(lavatrici[i].Nome + ": " + lavatrici[i].ControlloStato());
-            Console.WriteLine(asciugatrici[i].Nome + ": " + asciugatrici[i].ControlloStato());
+            string statoLavatrice;
+            if (lavatrici[i].ControlloStato())
+                statoLavatrice = "Vuota";
+            else
+                statoLavatrice = "In esecuzione";
+            string statoAsciugatrice;
+            if (asciugatrici[i].ControlloStato())
+                statoAsciugatrice = "Vuota";
+            else
+                statoAsciugatrice = "In esecuzione";
+            Console.WriteLine(lavatrici[i].Nome + ": " + statoLavatrice);
+            Console.WriteLine(asciugatrici[i].Nome + ": " + statoAsciugatrice);
         }
     }
     public void DettagliMacchina(string macchina, int numero)
@@ -90,7 +100,7 @@ public class Lavanderia
     {
         for(int i = 0; i < lavatrici.Length; i++)
         {
-            if (lavatrici[i].ControlloStato() == "Vuota")
+            if (lavatrici[i].ControlloStato())
             {
                 lavatrici[i].NuovoLavaggio();
                 break;
@@ -101,7 +111,7 @@ public class Lavanderia
     {
         for (int i = 0; i < asciugatrici.Length; i++)
         {
-            if (asciugatrici[i].ControlloStato() == "Vuota")
+            if (asciugatrici[i].ControlloStato())
             {
                 asciugatrici[i].NuovaAsciugatura();
             }
@@ -112,51 +122,24 @@ public class Lavanderia
 public class Lavatrice
 {
     public Lavatrice(string nome) {
-        Stato = "Vuota";
+        Stato = true;
         Gettoni = 0;
         Detersivo = 1000;
         Ammorbidente = 500;
         Nome = nome;
+        ProgrammiLavaggio = new ProgrammaLavaggio[3];
+        ProgrammiLavaggio[0] = new ProgrammaLavaggio("Lavaggio Rinfrescante", 20, 2, 20, 5);
+        ProgrammiLavaggio[1] = new ProgrammaLavaggio("Lavaggio Rinnovante", 40, 3, 40, 10);
+        ProgrammiLavaggio[2] = new ProgrammaLavaggio("Lavaggio Sgrassante", 60, 4, 60, 15);
+        LavaggioCorrente = new ProgrammaLavaggio("nessuna", 0, 0, 0, 0);
     }
     public int Detersivo { get; set; }
     public int Ammorbidente { get; set; }
     public int Gettoni { get; set; }
-    public string Stato { get; private set; }
-    public int Tempo { get; private set; }
+    public bool Stato { get; private set; }
     public string Nome { get; set; }
-    private void Rinfrescante()
-    {
-        if(Detersivo - 20 > 0 && Ammorbidente - 5 > 0)
-        {
-            Detersivo -= 20;
-            Ammorbidente -= 5;
-            Stato = "Lavaggio Rinfrescante in funzione";
-            Tempo = 20;
-            Gettoni += 2;
-        }
-    }
-    private void Rinnovante()
-    {
-        if (Detersivo - 40 > 0 && Ammorbidente - 10 > 0)
-        {
-            Detersivo -= 40;
-            Ammorbidente -= 10;
-            Stato = "Lavaggio Rinnovante in funzione";
-            Tempo = 40;
-            Gettoni += 3;
-        }
-    }
-    private void Sgrassante()
-    {
-        if (Detersivo - 60 > 0 && Ammorbidente - 15 > 0)
-        {
-            Detersivo -= 60;
-            Ammorbidente -= 16;
-            Stato = "Lavaggio Sgrassante in funzione";
-            Tempo = 60;
-            Gettoni += 4;
-        }
-    }
+    private ProgrammaLavaggio[] ProgrammiLavaggio;
+    public ProgrammaLavaggio LavaggioCorrente;
     public void NuovoLavaggio()
     {
         Console.WriteLine("Digita:");
@@ -166,46 +149,53 @@ public class Lavatrice
         //int scelta = Convert.ToInt32(Console.ReadLine());
         Random random = new Random();
         int scelta = random.Next(1, 4);
-        switch (scelta)
+        if (scelta == 1 || scelta == 2 || scelta == 3)
         {
-            case 1:
-                Rinfrescante();
-                break;
-            case 2:
-                Rinnovante();
-                break;
-            case 3:
-                Sgrassante();
-                break;
-            default: 
-                Console.WriteLine("Digitato numero errato");
-                break;
+            if (Detersivo - ProgrammiLavaggio[scelta - 1].ConsumoDetersivo > 0 && Ammorbidente - ProgrammiLavaggio[scelta - 1].ConsumoAmmorbidente > 0)
+            {
+                LavaggioCorrente.Nome = ProgrammiLavaggio[scelta - 1].Nome;
+                LavaggioCorrente.Tempo = ProgrammiLavaggio[scelta - 1].Tempo;
+                LavaggioCorrente.TempoRimanente = ProgrammiLavaggio[scelta - 1].Tempo;
+                LavaggioCorrente.Costo = ProgrammiLavaggio[scelta - 1].Costo;
+                LavaggioCorrente.ConsumoDetersivo = ProgrammiLavaggio[scelta - 1].ConsumoDetersivo;
+                LavaggioCorrente.ConsumoAmmorbidente = ProgrammiLavaggio[scelta - 1].ConsumoAmmorbidente;
+                Gettoni += LavaggioCorrente.Costo;
+                Detersivo -= LavaggioCorrente.ConsumoDetersivo;
+                Ammorbidente -= LavaggioCorrente.ConsumoAmmorbidente;
+            }
         }
+        else
+            Console.WriteLine("Digitato numero errato");
     }
-    public string ControlloStato()
+    public bool ControlloStato()
     {
-        if(Stato != "Vuota")
+        if(!Stato)
         {
             Random random = new Random();
             int finito = random.Next(1, 4);
-            if(finito == 1 || Tempo == 0)
+            if(finito == 1 || LavaggioCorrente.TempoRimanente == 0)
             {
-                Tempo = 0;
-                Stato = "Vuota";
+                LavaggioCorrente.TempoRimanente = 0;
+                Stato = true;
             } else
             {
-                Tempo = random.Next(0, Tempo);
+                LavaggioCorrente.TempoRimanente = random.Next(0, LavaggioCorrente.TempoRimanente);
             }
         }
         return Stato;
     }
     public void DettagliMacchina()
     {
+        string stato;
+        if (ControlloStato())
+            stato = "Vuota";
+        else
+            stato = "In esecuzione";
         Console.WriteLine("Nome: " + Nome);
-        Console.WriteLine("Stato: " + ControlloStato());
+        Console.WriteLine("Stato: " + stato);
         Console.WriteLine("Detersivo rimanente: " + Detersivo + "ml");
         Console.WriteLine("Ammorbidente rimanente: " + Ammorbidente + "ml");
-        Console.WriteLine("Tempo alla fine del lavaggio: " + Tempo);
+        Console.WriteLine("Tempo alla fine del lavaggio: " + LavaggioCorrente.TempoRimanente);
     }
     public double Incasso()
     {
@@ -220,12 +210,16 @@ public class Asciugatrice
         Stato = true;
         Gettoni = 0;
         Nome = nome;
-        programmaAsciugatura = new ProgrammaAsciugatura();
+        programmiAsciugatura = new ProgrammaAsciugatura[2];
+        programmiAsciugatura[0] = new ProgrammaAsciugatura("Asciugatura rapida", 30, 2);
+        programmiAsciugatura[1] = new ProgrammaAsciugatura("Asciugatura intensa", 60, 4);
+        asciugaturaCorrente = new ProgrammaAsciugatura("nessuna", 0, 0);
     }
     public int Gettoni { get; set; }
     public bool Stato { get; private set; }
     public string Nome { get; set; }
-    public ProgrammaAsciugatura programmaAsciugatura;
+    private ProgrammaAsciugatura[] programmiAsciugatura;
+    public ProgrammaAsciugatura asciugaturaCorrente;
     public void NuovaAsciugatura()
     {
         Console.WriteLine("Digita:");
@@ -234,22 +228,17 @@ public class Asciugatrice
         //int scelta = Convert.ToInt32(Console.ReadLine());
         Random random = new Random();
         int scelta = random.Next(1, 3);
-        switch (scelta)
+        if(scelta == 1 || scelta == 2)
         {
-            case 1:
-                programmaAsciugatura.Tempo = 30;
-                programmaAsciugatura.AsciugaturaCorrente = "Asciugatura rapida";
-                Gettoni += 2;
-                break;
-            case 2:
-                programmaAsciugatura.Tempo = 60;
-                programmaAsciugatura.AsciugaturaCorrente = "Asciugatura intensa";
-                Gettoni += 4;
-                break;
-            default:
-                Console.WriteLine("Digitato numero errato");
-                break;
+            asciugaturaCorrente.Nome = programmiAsciugatura[scelta - 1].Nome;
+            asciugaturaCorrente.Tempo = programmiAsciugatura[scelta - 1].Tempo;
+            asciugaturaCorrente.TempoRimanente = programmiAsciugatura[scelta - 1].Tempo;
+            asciugaturaCorrente.Costo = programmiAsciugatura[scelta - 1].Costo;
+            Gettoni += asciugaturaCorrente.Costo;
         }
+                
+        else
+            Console.WriteLine("Digitato numero errato");
     }
     public bool ControlloStato()
     {
@@ -257,23 +246,28 @@ public class Asciugatrice
         {
             Random random = new Random();
             int finito = random.Next(1, 4);
-            if (finito == 1 || programmaAsciugatura.Tempo == 0)
+            if (finito == 1 || asciugaturaCorrente.TempoRimanente == 0)
             {
-                programmaAsciugatura.Tempo = 0;
+                asciugaturaCorrente.TempoRimanente = 0;
                 Stato = true;
             }
             else
             {
-                programmaAsciugatura.Tempo = random.Next(0, programmaAsciugatura.Tempo);
+                asciugaturaCorrente.TempoRimanente = random.Next(0, asciugaturaCorrente.TempoRimanente);
             }
         }
         return Stato;
     }
     public void DettagliMacchina()
     {
+        string stato;
+        if (ControlloStato())
+            stato = "Vuota";
+        else
+            stato = "In esecuzione";
         Console.WriteLine("Nome: " + Nome);
-        Console.WriteLine("Stato: " + ControlloStato());
-        Console.WriteLine("Tempo alla fine dell'asciugatura: " + programmaAsciugatura.Tempo);
+        Console.WriteLine("Stato: " + stato);
+        Console.WriteLine("Tempo alla fine dell'asciugatura: " + asciugaturaCorrente.TempoRimanente);
     }
     public double Incasso()
     {
@@ -283,22 +277,34 @@ public class Asciugatrice
 
 public class ProgrammaLavaggio
 {
-    public ProgrammaLavaggio()
+    public ProgrammaLavaggio(string nome, int tempo, int costo, int consumoDetersivo, int consumoAmmorbidente)
     {
-        Tempo = 0;
-        LavaggioCorrente = "nessuno";
+        Tempo = tempo;
+        TempoRimanente = 0;
+        Nome = nome;
+        Costo = costo;
+        ConsumoDetersivo = consumoDetersivo;
+        ConsumoAmmorbidente = consumoAmmorbidente;
     }
     public int Tempo { get; set; }
-    public string LavaggioCorrente { get; set; }
+    public int TempoRimanente { get; set; }
+    public string Nome { get; set; }
+    public int Costo { get; set; }
+    public int ConsumoDetersivo { get; set; }
+    public int ConsumoAmmorbidente { get; set; }
 }
 
 public class ProgrammaAsciugatura
 {
-    public ProgrammaAsciugatura()
+    public ProgrammaAsciugatura(string nome, int tempo, int costo)
     {
-        Tempo = 0;
-        AsciugaturaCorrente = "nessuno";
+        Tempo = tempo;
+        TempoRimanente = 0;
+        Nome = nome;
+        Costo = costo;
     }
     public int Tempo { get; set; }
-    public string AsciugaturaCorrente { get; set; }
+    public int TempoRimanente { get; set; }
+    public string Nome { get; set; }
+    public int Costo { get; set; }
 }
