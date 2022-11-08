@@ -11,8 +11,3 @@ public abstract class Macchinario : IIncasso
         return (double)Gettoni * 0.50;
     }
 }
-
-public interface IIncasso
-{
-    public double Incasso();
-}
