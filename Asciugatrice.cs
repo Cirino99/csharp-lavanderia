@@ -1,6 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-public class Asciugatrice
+public class Asciugatrice : Macchinario
 {
     public Asciugatrice(string nome)
     {
@@ -12,9 +12,7 @@ public class Asciugatrice
         programmiAsciugatura[1] = new ProgrammaAsciugatura("Asciugatura intensa", 60, 4);
         asciugaturaCorrente = new ProgrammaAsciugatura("nessuna", 0, 0);
     }
-    public int Gettoni { get; set; }
     public bool Stato { get; private set; }
-    public string Nome { get; set; }
     private ProgrammaAsciugatura[] programmiAsciugatura;
     public ProgrammaAsciugatura asciugaturaCorrente;
     public void NuovaAsciugatura()
@@ -38,7 +36,7 @@ public class Asciugatrice
         else
             Console.WriteLine("Digitato numero errato");
     }
-    public bool ControlloStato()
+    public override bool ControlloStato()
     {
         if (!Stato)
         {
@@ -56,7 +54,7 @@ public class Asciugatrice
         }
         return Stato;
     }
-    public void DettagliMacchina()
+    public override void DettagliMacchina()
     {
         string stato;
         if (ControlloStato())
@@ -66,9 +64,5 @@ public class Asciugatrice
         Console.WriteLine("Nome: " + Nome);
         Console.WriteLine("Stato: " + stato);
         Console.WriteLine("Tempo alla fine dell'asciugatura: " + asciugaturaCorrente.TempoRimanente);
-    }
-    public double Incasso()
-    {
-        return (double)Gettoni * 0.50;
     }
 }

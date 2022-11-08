@@ -1,6 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-public class Lavatrice
+public class Lavatrice : Macchinario
 {
     public Lavatrice(string nome) {
         Stato = true;
@@ -16,9 +16,7 @@ public class Lavatrice
     }
     public int Detersivo { get; set; }
     public int Ammorbidente { get; set; }
-    public int Gettoni { get; set; }
     public bool Stato { get; private set; }
-    public string Nome { get; set; }
     private ProgrammaLavaggio[] ProgrammiLavaggio;
     public ProgrammaLavaggio LavaggioCorrente;
     public void NuovoLavaggio()
@@ -49,7 +47,7 @@ public class Lavatrice
         else
             Console.WriteLine("Digitato numero errato");
     }
-    public bool ControlloStato()
+    public override bool ControlloStato()
     {
         if(!Stato)
         {
@@ -66,7 +64,7 @@ public class Lavatrice
         }
         return Stato;
     }
-    public void DettagliMacchina()
+    public override void DettagliMacchina()
     {
         string stato;
         if (ControlloStato())
@@ -78,9 +76,5 @@ public class Lavatrice
         Console.WriteLine("Detersivo rimanente: " + Detersivo + "ml");
         Console.WriteLine("Ammorbidente rimanente: " + Ammorbidente + "ml");
         Console.WriteLine("Tempo alla fine del lavaggio: " + LavaggioCorrente.TempoRimanente);
-    }
-    public double Incasso()
-    {
-        return (double)Gettoni * 0.50;
     }
 }

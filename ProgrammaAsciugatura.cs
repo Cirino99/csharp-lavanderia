@@ -1,6 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-public class ProgrammaAsciugatura
+public class ProgrammaAsciugatura : Programma
 {
     public ProgrammaAsciugatura(string nome, int tempo, int costo)
     {
@@ -9,8 +9,4 @@ public class ProgrammaAsciugatura
         Nome = nome;
         Costo = costo;
     }
-    public int Tempo { get; set; }
-    public int TempoRimanente { get; set; }
-    public string Nome { get; set; }
-    public int Costo { get; set; }
 }
