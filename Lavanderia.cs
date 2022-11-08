@@ -1,6 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-public class Lavanderia
+public class Lavanderia : IIncasso
 {
     public Lavanderia()
     {
@@ -44,10 +44,8 @@ public class Lavanderia
         else
             asciugatrici[numero - 1].DettagliMacchina();
     }
-    public void Incasso()
+    public double Incasso()
     {
-        Console.Clear();
-        Console.WriteLine("Incassi:");
         double incassoTotale = 0;
         for(int i=0; i<lavatrici.Length; i++)
         {
@@ -55,7 +53,8 @@ public class Lavanderia
             Console.WriteLine(asciugatrici[i].Nome + ": " + asciugatrici[i].Incasso() + "$");
             incassoTotale = incassoTotale + lavatrici[i].Incasso() + asciugatrici[i].Incasso();
         }
-        Console.WriteLine("Totale: " + incassoTotale + "$");
+        
+        return incassoTotale;
     }
     public void ProgrammaLavatrici()
     {

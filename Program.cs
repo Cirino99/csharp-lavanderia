@@ -31,7 +31,9 @@ do
             lavanderia.ProgrammaAsciugatrici();
             break;
         case 5:
-            lavanderia.Incasso();
+            Console.Clear();
+            Console.WriteLine("Incassi:");
+            Console.WriteLine("Totale: " + lavanderia.Incasso() + "$");
             break;
         default:
             fine = true;
