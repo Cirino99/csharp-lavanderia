@@ -7,14 +7,11 @@ public class Asciugatrice : Macchinario
         Stato = true;
         Gettoni = 0;
         Nome = nome;
-        programmiAsciugatura = new ProgrammaAsciugatura[2];
-        programmiAsciugatura[0] = new ProgrammaAsciugatura("Asciugatura rapida", 30, 2);
-        programmiAsciugatura[1] = new ProgrammaAsciugatura("Asciugatura intensa", 60, 4);
-        asciugaturaCorrente = new ProgrammaAsciugatura("nessuna", 0, 0);
+        Programmi = new ProgrammaAsciugatura[2];
+        Programmi[0] = new ProgrammaAsciugatura("Asciugatura rapida", 30, 2);
+        Programmi[1] = new ProgrammaAsciugatura("Asciugatura intensa", 60, 4);
+        ProgrammaCorrente = new ProgrammaAsciugatura("nessuna", 0, 0);
     }
-    public bool Stato { get; private set; }
-    private ProgrammaAsciugatura[] programmiAsciugatura;
-    public ProgrammaAsciugatura asciugaturaCorrente;
     public void NuovaAsciugatura()
     {
         Console.WriteLine("Digita:");
@@ -25,11 +22,11 @@ public class Asciugatrice : Macchinario
         int scelta = random.Next(1, 3);
         if(scelta == 1 || scelta == 2)
         {
-            asciugaturaCorrente.Nome = programmiAsciugatura[scelta - 1].Nome;
-            asciugaturaCorrente.Tempo = programmiAsciugatura[scelta - 1].Tempo;
-            asciugaturaCorrente.TempoRimanente = programmiAsciugatura[scelta - 1].Tempo;
-            asciugaturaCorrente.Costo = programmiAsciugatura[scelta - 1].Costo;
-            Gettoni += asciugaturaCorrente.Costo;
+            ProgrammaCorrente.Nome = Programmi[scelta - 1].Nome;
+            ProgrammaCorrente.Tempo = Programmi[scelta - 1].Tempo;
+            ProgrammaCorrente.TempoRimanente = Programmi[scelta - 1].Tempo;
+            ProgrammaCorrente.Costo = Programmi[scelta - 1].Costo;
+            Gettoni += ProgrammaCorrente.Costo;
             Stato = false;
         }
                 
@@ -42,14 +39,14 @@ public class Asciugatrice : Macchinario
         {
             Random random = new Random();
             int finito = random.Next(1, 4);
-            if (finito == 1 || asciugaturaCorrente.TempoRimanente == 0)
+            if (finito == 1 || ProgrammaCorrente.TempoRimanente == 0)
             {
-                asciugaturaCorrente.TempoRimanente = 0;
+                ProgrammaCorrente.TempoRimanente = 0;
                 Stato = true;
             }
             else
             {
-                asciugaturaCorrente.TempoRimanente = random.Next(0, asciugaturaCorrente.TempoRimanente);
+                ProgrammaCorrente.TempoRimanente = random.Next(0, ProgrammaCorrente.TempoRimanente);
             }
         }
         return Stato;
@@ -63,6 +60,6 @@ public class Asciugatrice : Macchinario
             stato = "In esecuzione";
         Console.WriteLine("Nome: " + Nome);
         Console.WriteLine("Stato: " + stato);
-        Console.WriteLine("Tempo alla fine dell'asciugatura: " + asciugaturaCorrente.TempoRimanente);
+        Console.WriteLine("Tempo alla fine dell'asciugatura: " + ProgrammaCorrente.TempoRimanente);
     }
 }

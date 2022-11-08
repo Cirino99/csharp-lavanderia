@@ -6,4 +6,4 @@ public abstract class Programma
     public int Tempo { get; set; }
     public int TempoRimanente { get; set; }
     public int Costo { get; set; }
-} 
+}

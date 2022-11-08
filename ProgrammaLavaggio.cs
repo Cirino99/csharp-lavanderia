@@ -11,6 +11,7 @@ public class ProgrammaLavaggio : Programma
         ConsumoDetersivo = consumoDetersivo;
         ConsumoAmmorbidente = consumoAmmorbidente;
     }
+
     public int ConsumoDetersivo { get; set; }
     public int ConsumoAmmorbidente { get; set; }
 }

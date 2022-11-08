@@ -8,17 +8,25 @@ public class Lavatrice : Macchinario
         Detersivo = 1000;
         Ammorbidente = 500;
         Nome = nome;
-        ProgrammiLavaggio = new ProgrammaLavaggio[3];
-        ProgrammiLavaggio[0] = new ProgrammaLavaggio("Lavaggio Rinfrescante", 20, 2, 20, 5);
-        ProgrammiLavaggio[1] = new ProgrammaLavaggio("Lavaggio Rinnovante", 40, 3, 40, 10);
-        ProgrammiLavaggio[2] = new ProgrammaLavaggio("Lavaggio Sgrassante", 60, 4, 60, 15);
-        LavaggioCorrente = new ProgrammaLavaggio("nessuna", 0, 0, 0, 0);
+        Programmi = new ProgrammaLavaggio[3];
+        Programmi[0] = new ProgrammaLavaggio("Lavaggio Rinfrescante", 20, 2, 20, 5);
+        Programmi[1] = new ProgrammaLavaggio("Lavaggio Rinnovante", 40, 3, 40, 10);
+        Programmi[2] = new ProgrammaLavaggio("Lavaggio Sgrassante", 60, 4, 60, 15);
+        ProgrammaCorrente = new ProgrammaLavaggio("nessuna", 0, 0, 0, 0);
+    }
+    public ProgrammaLavaggio ProgrammaCorrente
+    {
+        get
+        {
+            return (ProgrammaLavaggio)base.ProgrammaCorrente;
+        }
+        protected set
+        {
+            base.ProgrammaCorrente = value;
+        }
     }
     public int Detersivo { get; set; }
     public int Ammorbidente { get; set; }
-    public bool Stato { get; private set; }
-    private ProgrammaLavaggio[] ProgrammiLavaggio;
-    public ProgrammaLavaggio LavaggioCorrente;
     public void NuovoLavaggio()
     {
         Console.WriteLine("Digita:");
@@ -30,17 +38,17 @@ public class Lavatrice : Macchinario
         int scelta = random.Next(1, 4);
         if (scelta == 1 || scelta == 2 || scelta == 3)
         {
-            if (Detersivo - ProgrammiLavaggio[scelta - 1].ConsumoDetersivo > 0 && Ammorbidente - ProgrammiLavaggio[scelta - 1].ConsumoAmmorbidente > 0)
+            if (Detersivo - GetProgrammaLavaggio(scelta).ConsumoDetersivo > 0 && Ammorbidente - GetProgrammaLavaggio(scelta).ConsumoAmmorbidente > 0)
             {
-                LavaggioCorrente.Nome = ProgrammiLavaggio[scelta - 1].Nome;
-                LavaggioCorrente.Tempo = ProgrammiLavaggio[scelta - 1].Tempo;
-                LavaggioCorrente.TempoRimanente = ProgrammiLavaggio[scelta - 1].Tempo;
-                LavaggioCorrente.Costo = ProgrammiLavaggio[scelta - 1].Costo;
-                LavaggioCorrente.ConsumoDetersivo = ProgrammiLavaggio[scelta - 1].ConsumoDetersivo;
-                LavaggioCorrente.ConsumoAmmorbidente = ProgrammiLavaggio[scelta - 1].ConsumoAmmorbidente;
-                Gettoni += LavaggioCorrente.Costo;
-                Detersivo -= LavaggioCorrente.ConsumoDetersivo;
-                Ammorbidente -= LavaggioCorrente.ConsumoAmmorbidente;
+                ProgrammaCorrente.Nome = GetProgrammaLavaggio(scelta).Nome;
+                ProgrammaCorrente.Tempo = GetProgrammaLavaggio(scelta).Tempo;
+                ProgrammaCorrente.TempoRimanente = GetProgrammaLavaggio(scelta).Tempo;
+                ProgrammaCorrente.Costo = GetProgrammaLavaggio(scelta).Costo;
+                ProgrammaCorrente.ConsumoDetersivo = GetProgrammaLavaggio(scelta).ConsumoDetersivo;
+                ProgrammaCorrente.ConsumoAmmorbidente = GetProgrammaLavaggio(scelta).ConsumoAmmorbidente;
+                Gettoni += ProgrammaCorrente.Costo;
+                Detersivo -= ProgrammaCorrente.ConsumoDetersivo;
+                Ammorbidente -= ProgrammaCorrente.ConsumoAmmorbidente;
                 Stato = false;
             }
         }
@@ -53,13 +61,13 @@ public class Lavatrice : Macchinario
         {
             Random random = new Random();
             int finito = random.Next(1, 4);
-            if(finito == 1 || LavaggioCorrente.TempoRimanente == 0)
+            if(finito == 1 || ProgrammaCorrente.TempoRimanente == 0)
             {
-                LavaggioCorrente.TempoRimanente = 0;
+                ProgrammaCorrente.TempoRimanente = 0;
                 Stato = true;
             } else
             {
-                LavaggioCorrente.TempoRimanente = random.Next(0, LavaggioCorrente.TempoRimanente);
+                ProgrammaCorrente.TempoRimanente = random.Next(0, ProgrammaCorrente.TempoRimanente);
             }
         }
         return Stato;
@@ -75,6 +83,11 @@ public class Lavatrice : Macchinario
         Console.WriteLine("Stato: " + stato);
         Console.WriteLine("Detersivo rimanente: " + Detersivo + "ml");
         Console.WriteLine("Ammorbidente rimanente: " + Ammorbidente + "ml");
-        Console.WriteLine("Tempo alla fine del lavaggio: " + LavaggioCorrente.TempoRimanente);
+        Console.WriteLine("Tempo alla fine del lavaggio: " + ProgrammaCorrente.TempoRimanente);
+    }
+
+    private ProgrammaLavaggio GetProgrammaLavaggio(int scelta)
+    {
+        return (ProgrammaLavaggio)Programmi[scelta - 1];
     }
 }
